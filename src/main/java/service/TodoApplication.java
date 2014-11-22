@@ -11,7 +11,7 @@ import io.dropwizard.java8.Java8Bundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
-import resource.TodoResource;
+import resources.TodoResource;
 
 public class TodoApplication extends Application<Configuration> {
     @Override
