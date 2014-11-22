@@ -1,6 +1,8 @@
 apply plugin: 'java'
+apply plugin: 'application'
 
 sourceCompatibility = 1.8
+targetCompativility = 1.8
 version = '1.0'
 
 repositories {
@@ -12,4 +14,9 @@ dependencies {
     compile group: 'io.dropwizard.modules', name: 'dropwizard-java8', version: '0.7.0-1'
     testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: '0.7.1'
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+mainClassName = 'service.TodoApplication'
+run {
+    args 'server', 'src/main/resources/config.yaml'
 }
