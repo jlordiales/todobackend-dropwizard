@@ -13,7 +13,7 @@ public class TodoResource {
 
     @GET
     public String hello() {
-        return "Hello World";
+        return "Hello World 2";
     }
 
     @POST
