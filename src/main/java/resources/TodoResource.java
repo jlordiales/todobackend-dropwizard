@@ -48,6 +48,12 @@ public class TodoResource {
     }
 
     @DELETE
+    public Response deleteAll() {
+        todos.clear();
+        return Response.ok().build();
+    }
+
+    @DELETE
     @Path("/todo/{id}")
     public Response delete(@PathParam("id") int id) {
         todos.remove(id);
