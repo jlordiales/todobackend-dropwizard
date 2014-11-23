@@ -43,7 +43,7 @@ public class TodoResource {
     public Response createTodo(Todo todo, @Context UriInfo uriInfo) {
         int todoId = todosCount.getAndIncrement();
         URI todoUri = uriInfo.getBaseUriBuilder().path(TodoResource.class, "getTodo").build(todoId);
-        Todo newTodo = new Todo(todo.getTitle(), false, todoUri.toASCIIString());
+        Todo newTodo = new Todo(todo.getTitle(), false, todoUri.toASCIIString(),todo.getOrder());
 
         todos.put(todoId, newTodo);
         return Response.ok(newTodo).build();
@@ -70,7 +70,9 @@ public class TodoResource {
 
         String newTitle = params.getOrDefault("title", todoToUpdate.getTitle());
         String newStatus = params.getOrDefault("completed", String.valueOf(todoToUpdate.isCompleted()));
-        Todo newTodo = new Todo(newTitle, Boolean.valueOf(newStatus), todoToUpdate.getUrl());
+        String newOrder = params.getOrDefault("order", String.valueOf(todoToUpdate.getOrder()));
+
+        Todo newTodo = new Todo(newTitle, Boolean.valueOf(newStatus), todoToUpdate.getUrl(), Integer.valueOf(newOrder));
         todos.replace(id, newTodo);
         return Response.ok(newTodo).build();
 

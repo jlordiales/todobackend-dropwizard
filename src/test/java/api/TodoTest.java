@@ -15,8 +15,8 @@ public class TodoTest {
 
     @Test
     public void shouldDeserializeJson() throws IOException {
-        final Todo expectedTodo = new Todo("a todo");
-        final Todo deserializedTodo = MAPPER.readValue(fixture("fixtures/todo.json"), Todo.class);
+        final Todo expectedTodo = new Todo("simple todo");
+        final Todo deserializedTodo = MAPPER.readValue(fixture("fixtures/simple.json"), Todo.class);
 
         assertThat(deserializedTodo).isEqualTo(expectedTodo);
     }

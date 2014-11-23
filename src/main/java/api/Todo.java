@@ -12,16 +12,18 @@ public class Todo {
     private final String title;
     private final boolean completed;
     private final String url;
+    private final int order;
 
     @JsonCreator
     public Todo(@JsonProperty("title") String title) {
-        this(title, false,"");
+        this(title, false,"", 1);
     }
 
-    public Todo(String title, boolean completed, String url) {
+    public Todo(String title, boolean completed, String url, int order) {
         this.title = title;
         this.completed = completed;
         this.url = url;
+        this.order = order;
     }
 
     @JsonProperty("title")
@@ -37,6 +39,11 @@ public class Todo {
     @JsonProperty("url")
     public String getUrl() {
         return url;
+    }
+
+    @JsonProperty("order")
+    public int getOrder() {
+        return order;
     }
 
     @Override
