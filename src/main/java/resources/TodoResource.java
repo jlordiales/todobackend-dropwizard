@@ -72,7 +72,7 @@ public class TodoResource {
         String newStatus = params.getOrDefault("completed", String.valueOf(todoToUpdate.isCompleted()));
         Todo newTodo = new Todo(newTitle, Boolean.valueOf(newStatus), todoToUpdate.getUrl());
         todos.replace(id, newTodo);
-        return Response.ok().build();
+        return Response.ok(newTodo).build();
 
     }
 }
