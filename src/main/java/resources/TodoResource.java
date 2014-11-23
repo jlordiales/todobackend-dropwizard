@@ -13,9 +13,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import api.Todo;
 
@@ -38,9 +39,9 @@ public class TodoResource {
     }
 
     @POST
-    public Response createTodo(Todo todo) {
+    public Response createTodo(Todo todo, @Context UriInfo uriInfo) {
         int todoId = todosCount.getAndIncrement();
-        URI todoUri = UriBuilder.fromResource(TodoResource.class).path(TodoResource.class, "getTodo").build(todoId);
+        URI todoUri = uriInfo.getBaseUriBuilder().path(TodoResource.class, "getTodo").build(todoId);
         Todo newTodo = new Todo(todo.getTitle(), false, todoUri.toASCIIString());
 
         todos.put(todoId, newTodo);
