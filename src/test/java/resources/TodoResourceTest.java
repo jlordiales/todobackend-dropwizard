@@ -4,7 +4,9 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static javax.ws.rs.core.Response.Status.OK;
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import api.Todo;
 import io.dropwizard.testing.junit.ResourceTestRule;
@@ -77,6 +79,34 @@ public class TodoResourceTest {
         deleteTodo(todos.get(0).getUrl());
 
         assertThat(getTodos()).isEmpty();
+    }
+
+    @Test
+    public void shouldChangeTheTitleByPatchingToTheUrl() {
+        Todo todo = new Todo("todo");
+        saveTodo(todo);
+
+        List<Todo> todos = getTodos();
+
+        Map<String, String> params = new HashMap<>();
+        params.put("title", "changed");
+        resources.client().resource(todos.get(0).getUrl()).type(APPLICATION_JSON_TYPE).method("PATCH", params);
+
+        assertThat(getTodo(todos.get(0).getUrl()).getTitle()).isEqualTo("changed");
+    }
+
+    @Test
+    public void shouldChangeTheCompleteStatusByPatchingToTheUrl() {
+        Todo todo = new Todo("todo");
+        saveTodo(todo);
+
+        List<Todo> todos = getTodos();
+
+        Map<String, String> params = new HashMap<>();
+        params.put("completed", "true");
+        resources.client().resource(todos.get(0).getUrl()).type(APPLICATION_JSON_TYPE).method("PATCH", params);
+
+        assertThat(getTodo(todos.get(0).getUrl()).isCompleted()).isTrue();
     }
 
     private Todo getTodo(String url) {

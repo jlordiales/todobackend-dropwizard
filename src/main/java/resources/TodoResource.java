@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import api.Todo;
+import io.dropwizard.jersey.PATCH;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -61,5 +62,17 @@ public class TodoResource {
         return Response.ok().build();
     }
 
-    
+    @PATCH
+    @Path("/todo/{id}")
+    public Response updateTodo(@PathParam("id") int id, Map<String, String> params) {
+        Todo todoToUpdate = todos.get(id);
+        if (todoToUpdate == null) return Response.status(Response.Status.NOT_FOUND).build();
+
+        String newTitle = params.getOrDefault("title", todoToUpdate.getTitle());
+        String newStatus = params.getOrDefault("completed", String.valueOf(todoToUpdate.isCompleted()));
+        Todo newTodo = new Todo(newTitle, Boolean.valueOf(newStatus), todoToUpdate.getUrl());
+        todos.replace(id, newTodo);
+        return Response.ok().build();
+
+    }
 }
