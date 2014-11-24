@@ -22,8 +22,16 @@ public class TodoTest {
     }
 
     @Test
+    public void shouldDeserializePartialRepresentation() throws IOException {
+        final Todo expectedTodo = new Todo(null,null,null,99,null);
+        final Todo deserializedTodo = MAPPER.readValue(fixture("fixtures/partialUpdate.json"), Todo.class);
+
+        assertThat(deserializedTodo).isEqualTo(expectedTodo);
+    }
+
+    @Test
     public void shouldSerializeObject() throws IOException {
-        final Todo todo = new Todo("a todo");
+        final Todo todo = new Todo("a todo",true,null,15,null);
         String serializedTodo = MAPPER.writeValueAsString(todo);
         assertThat(serializedTodo).isEqualTo(fixture("fixtures/todo.json"));
     }
