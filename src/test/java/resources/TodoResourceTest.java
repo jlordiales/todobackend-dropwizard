@@ -10,32 +10,20 @@ import java.util.List;
 import java.util.Map;
 
 import api.Todo;
-import io.dropwizard.Configuration;
-import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
+import io.dropwizard.testing.junit.ResourceTestRule;
+import org.junit.Rule;
 import org.junit.Test;
-import service.TodoApplication;
 
-import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 
 public class TodoResourceTest {
-    @ClassRule
-    public static final DropwizardAppRule<Configuration> RULE =
-        new DropwizardAppRule<>(TodoApplication.class, "src/main/resources/config.yaml");
+    private static final String ROOT_PATH = "/todos";
 
-    private Client client = new Client();
-    private String rootPath;
-
-    @Before
-    public void setup() {
-        rootPath = String.format("http://localhost:%d/todos", RULE.getLocalPort());
-        client.resource(rootPath).delete();
-    }
-
+    @Rule
+    public final ResourceTestRule resources = ResourceTestRule.builder()
+        .addResource(new TodoResource())
+        .build();
 
     @Test
     public void shouldRespondAPostWithTheTodoPostedAndStatusNotComplete() {
@@ -97,7 +85,6 @@ public class TodoResourceTest {
     }
 
     @Test
-    @Ignore("Amazingly the HttpURLConnection class doesnt support PATCH...")
     public void shouldChangeTheTitleByPatchingToTheUrl() {
         Todo todo = new Todo("todo");
         saveTodo(todo);
@@ -106,13 +93,12 @@ public class TodoResourceTest {
 
         Map<String, String> params = new HashMap<>();
         params.put("title", "changed");
-        client.resource(todos.get(0).getUrl()).type(APPLICATION_JSON_TYPE).method("patch", params);
+        resources.client().resource(todos.get(0).getUrl()).type(APPLICATION_JSON_TYPE).method("PATCH", params);
 
         assertThat(getTodo(todos.get(0).getUrl()).getTitle()).isEqualTo("changed");
     }
 
     @Test
-    @Ignore("Amazingly the HttpURLConnection class doesnt support PATCH...")
     public void shouldChangeTheCompleteStatusByPatchingToTheUrl() {
         Todo todo = new Todo("todo");
         saveTodo(todo);
@@ -121,28 +107,28 @@ public class TodoResourceTest {
 
         Map<String, String> params = new HashMap<>();
         params.put("completed", "true");
-        client.resource(todos.get(0).getUrl()).type(APPLICATION_JSON_TYPE).method("PATCH", params);
+        resources.client().resource(todos.get(0).getUrl()).type(APPLICATION_JSON_TYPE).method("PATCH", params);
 
         assertThat(getTodo(todos.get(0).getUrl()).isCompleted()).isTrue();
     }
 
     private Todo getTodo(URI url) {
-        return client.resource(url).type(APPLICATION_JSON_TYPE).get(
+        return resources.client().resource(url).type(APPLICATION_JSON_TYPE).get(
             Todo.class);
     }
 
     private List<Todo> getTodos() {
-        return client.resource(rootPath).type(APPLICATION_JSON_TYPE).get(
+        return resources.client().resource(ROOT_PATH).type(APPLICATION_JSON_TYPE).get(
             new GenericType<List<Todo>>() {
             });
     }
 
     private ClientResponse saveTodo(Todo passedTodo) {
-        return client.resource(rootPath).type(APPLICATION_JSON_TYPE).post(
+        return resources.client().resource(ROOT_PATH).type(APPLICATION_JSON_TYPE).post(
             ClientResponse.class, passedTodo);
     }
 
     private ClientResponse deleteTodo(URI url) {
-        return client.resource(url).type(APPLICATION_JSON_TYPE).delete(ClientResponse.class);
+        return resources.client().resource(url).type(APPLICATION_JSON_TYPE).delete(ClientResponse.class);
     }
 }
